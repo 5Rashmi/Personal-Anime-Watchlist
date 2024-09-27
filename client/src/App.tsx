@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Dashboard } from './pages/dashboard';
 import { Auth } from './pages/auth';
-import { Button, Flex, useColorMode } from '@chakra-ui/react';
+import logo from '../img/logo.png'
+import { Button, Flex, useColorMode, Image } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 
 function App() {
@@ -9,11 +10,11 @@ function App() {
   
   return (<>
   <header>
-      <Flex justify={'space-between'} pt={4}>
-        <h2>Personal Anime Watchlist</h2>
-      <Button onClick={toggleColorMode}>
-        {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-      </Button>
+      <Flex justify={'space-between'} align={'center'} px={4}>
+        <Image src={logo} alt="Logo" boxSize="120px" />
+        <Button onClick={toggleColorMode} variant={'outline'}>
+          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+        </Button>
       </Flex>
     </header>
     <Router>

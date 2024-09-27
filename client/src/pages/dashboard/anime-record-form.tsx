@@ -7,85 +7,19 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
-  Spinner,
   Text,
   Image,
   Textarea,
-  List,
-  ListItem,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { useState } from "react";
 import ReactStars from "react-stars";
-import {
-  searchAnime,
-  fetchAnimeRecommendations,
-  fetchGenre,
-  fetchAnimeDescription,
-  fetchTotalEpisodes,
-} from "../../utils/searchAnime";
 
-export const AnimeRecordForm: React.FC = () => {
-  const [genres, setGenre] = useState<string[]>([]);
+export const AnimeRecordForm = () => {
+  
   const [rating, setRating] = useState<number>(0);
-  const [episodeWatched, setEpisodeWatched] = useState<number>(0);
-  const [totalEpisodes, setTotalEpisodes] = useState<number>(0);
-  const [animeName, setAnimeName] = useState<string>("");
-  const [posterUrl, setPosterUrl] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [recommendations, setRecommendations] = useState<string[]>([]);
-  const [description, setDescription] = useState<string>("");
-
-  const handleSearchAnime = async () => {
-    setLoading(true);
-    setError("");
-    setRecommendations([]);
-    try {
-      const poster = await searchAnime(animeName);
-      const desc = await fetchAnimeDescription(animeName);
-      const epi = await fetchTotalEpisodes(animeName);
-      const uniqueGenre = await fetchGenre(animeName);
-      
-      setPosterUrl(poster);
-      setDescription(desc);
-      setTotalEpisodes(epi);
-      setGenre(uniqueGenre);
-
-    } catch (err: any) {
-      console.log('Error encountered', err.message);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-      console.log('Fetch completed');
-    }
-  };
-
-  const handleAnimeNameChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-    setAnimeName(value);
-
-    if (value) {
-      try {
-        const suggestions = await fetchAnimeRecommendations(value);
-        setRecommendations(suggestions);
-      } catch (err) {
-        console.error(err);
-      }
-    } else {
-      setRecommendations([]);
-    }
-  };
-
-  const handleRecommendationSelect = (recommendation: string) => {
-    setAnimeName(recommendation);
-    setRecommendations([]);
-  };
 
   return (
     <div className="form-container">
-      {" "}
       <form>
         <div
           className="form-field"
@@ -95,40 +29,17 @@ export const AnimeRecordForm: React.FC = () => {
           <Input
             type="text"
             placeholder="Search for the anime name and click on the search button..."
-            value={animeName}
-            onChange={handleAnimeNameChange}
             className="input"
             width={800}
             mt={2}
             required
           />
-          <Button onClick={handleSearchAnime} colorScheme="teal" mt={2}>
+          <Button colorScheme="teal" mt={2}>
             Search
           </Button>
-          {loading && <Spinner />}
-          {error && <Text color="red.500">{error}</Text>}
         </div>
-        {recommendations.length > 0 && (
-          <List spacing={2} mt={2} ml={20} onClick={handleSearchAnime}>
-            {recommendations.map((recommendation, index) => (
-              <ListItem
-                key={index}
-                onClick={() => handleRecommendationSelect(recommendation)}
-                cursor={"pointer"}
-                _hover={{ color: "teal.500" }}
-              >
-                {recommendation}
-              </ListItem>
-            ))}
-          </List>
-        )}
-        {posterUrl && (
-          <div
-            className="form-field"
-            style={{ display: "flex", alignItems: "center", gap: "10px" }}
-          >
+        <div>
             <Image
-              src={posterUrl}
               alt="Anime Poster"
               boxSize="300px"
               objectFit="cover"
@@ -136,46 +47,44 @@ export const AnimeRecordForm: React.FC = () => {
               ml={4}
               align={"center"}
             />
-            <Text mt={2} ml={4} width={"1100px"}>
-              {description}
+            <Text mt={2} ml={4} width={"1000px"}>
+              Description
             </Text>
-          </div>
-        )}
+        </div>
+        
         <div
           className="form-field"
           style={{ display: "flex", alignItems: "center", gap: "10px" }}
         >
           <label>Genre: </label>
-          {posterUrl && (
-            <div className="form-field">
-              <Text
-                mt={2}
-                ml={4}
-                width={300}
-              >
-                
-                {genres.join(', ')}
+              <Text width={700}>
+                Genre
               </Text>
-            </div>
-          )}
         </div>
+
+        <div
+            className="form-field"
+            style={{ display: "flex", alignItems: "center", gap: "10px" }}
+          >
+            <label>Year: </label>
+                <Text maxW={10}>Year</Text>
+          </div>
+          
+          <div
+            className="form-field"
+            style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <label>Status: </label>
+                <Text maxW={40}>Status</Text>
+          </div>
 
         <div
           className="form-field"
           style={{ display: "flex", alignItems: "center", gap: "10px" }}
         >
           <label>Total Episodes: </label>
-          {posterUrl && (
-            <div className="form-field">
               <Input
-                value={totalEpisodes}
-                isReadOnly
-                mt={2}
-                ml={4}
                 width={200}
-              />
-            </div>
-          )}
+                readOnly />
         </div>
         <div
           className="form-field"
@@ -185,12 +94,7 @@ export const AnimeRecordForm: React.FC = () => {
           <NumberInput
             className="input"
             width={200}
-            value={episodeWatched}
-            onChange={(valueString, valueNumber) =>
-              setEpisodeWatched(valueNumber)
-            }
             min={0}
-            max={totalEpisodes}
             isRequired={true}
           >
             <NumberInputField />
@@ -204,7 +108,7 @@ export const AnimeRecordForm: React.FC = () => {
           className="form-field"
           style={{ display: "flex", alignItems: "center", gap: "10px" }}
         >
-          <label>Status: </label>
+          <label>Watch Status: </label>
           <Select required className="input" width={300}>
             <option value={""}>Select a Status</option>
             <option value={"Watching"}>Watching</option>

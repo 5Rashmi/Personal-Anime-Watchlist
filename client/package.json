@@ -13,6 +13,8 @@
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
     "@clerk/clerk-react": "^5.9.1",
+    "@types/axios": "^0.14.0",
+    "axios": "^1.7.7",
     "framer-motion": "^11.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

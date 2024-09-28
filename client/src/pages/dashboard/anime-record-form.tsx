@@ -1,4 +1,3 @@
-import { Search2Icon } from "@chakra-ui/icons";
 import {
   Button,
   Input,
@@ -18,96 +17,195 @@ import {
   Box,
   VStack,
   HStack,
+  CardFooter,
+  List,
+  ListItem,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactStars from "react-stars";
+import axios from 'axios';
+import { useUser } from "@clerk/clerk-react";
 
 export const AnimeRecordForm = () => {
-  const [rating, setRating] = useState<number>(0);
-
   const labelColor = useColorModeValue("teal.600", "teal.200");
   const bgColor = useColorModeValue("white", "gray.800");
   const cardShadow = useColorModeValue("lg", "dark-lg");
+  const listBgColor = useColorModeValue("gray.100", "gray.700");
+  const listItemHoverColor = useColorModeValue("teal.100", "teal.600");
+
+  const [name, setName] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedAnime, setSelectedAnime] = useState<any>(null);
+
+  const [poster, setPoster] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [genre, setGenre] = useState<string[]>([]);
+  const [year, setYear] = useState<number | null>(null);
+  const [status, setStatus] = useState<string>("");
+  const [totalEpisodes, setTotalEpisodes] = useState<number>(0);
+  const [episodesWatched, setEpisodesWatched] = useState<number>(0);
+  const [watchStatus, setWatchStatus] = useState<string>("");
+  const [completionDate, setCompletionDate] = useState<string>("");
+  const [rating, setRating] = useState<number>(0);
+  const [notes, setNotes] = useState<string>("");
+  const [inputFocused, setInputFocused] = useState<boolean>(false);
+
+  const { user } = useUser();
+
+  const handleSearchAnime = async (query: string) => {
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+    try {
+      const response = await axios.get(`https://api.jikan.moe/v4/anime?q=${query}`);
+      setSearchResults(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data from Jikan API ", error);
+    }
+  };
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (!selectedAnime || inputFocused) {
+        handleSearchAnime(name);
+      }
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [name, selectedAnime, inputFocused]);
+
+  const handleSelectedAnime = (anime: any) => {
+    setSelectedAnime(anime);
+    setName(anime.title);
+    setPoster(anime.images.jpg.large_image_url);
+    setDescription(anime.synopsis);
+    setGenre(anime.genres.map((g: any) => g.name));
+    setYear(anime.year);
+    setStatus(anime.status);
+    setTotalEpisodes(anime.episodes);
+    setEpisodesWatched(0);
+    setWatchStatus('');
+    setSearchResults([]);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const newRecord = {
+      userId: user?.id,
+      name: name,
+      description: description,
+      genre: genre,
+      year: year,
+      status: status,
+      totalEpisodes: totalEpisodes,
+      episodesWatched: episodesWatched,
+      watchStatus: watchStatus,
+      rating: rating,
+      notes: notes
+    };
+
+    setName("");
+    setPoster("");
+    setDescription("");
+    setGenre([]);
+    setYear(0);
+    setStatus("");
+    setTotalEpisodes(0);
+    setEpisodesWatched(0);
+    setWatchStatus('');
+    setCompletionDate('');
+    setRating(0);
+    setNotes('');
+  };
 
   return (
-    <Card width="auto" justify={"center"} boxShadow={cardShadow} margin={7}>
+    <Card className="form-container" width="auto" justify={"center"} boxShadow={cardShadow} margin={7}>
+      <form onSubmit={handleSubmit}>
       <CardBody bg={bgColor} padding={8} borderRadius="lg">
-        <form>
           <VStack spacing={4} align="stretch">
             <HStack>
-              <FormLabel fontWeight="bold" color={labelColor}>
+            <FormLabel fontWeight="bold" color={labelColor} mb={0}>
                 Name
               </FormLabel>
               <Input
                 type="text"
-                placeholder="Search for the anime name and click on the search button..."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Search for anime by name and select from the list below..."
                 width="60%"
                 required
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
               />
-              <Button colorScheme="teal">
-                <Search2Icon />
-              </Button>
             </HStack>
 
-            <HStack spacing={4} align="center">
-              <Image alt="Anime Poster" boxSize="300px" objectFit="cover" />
-              <Text fontWeight="bold" color={labelColor}>
-                Description
-              </Text>
-            </HStack>
-
-            <Box>
-              <FormLabel fontWeight="bold" color={labelColor}>
-                Genre
-              </FormLabel>
-              <Text>Genre</Text>
-            </Box>
-
-            <HStack spacing={8} justify="center">
-              <Box>
-                <HStack spacing={2} alignItems="center">
-                  <FormLabel
-                    fontWeight="bold"
-                    color={labelColor}
-                    marginBottom={0}
-                  >
-                    Year:
-                  </FormLabel>
-                  <Text>Year</Text>
-                </HStack>
+            {searchResults.length > 0 && (
+              <Box bg={listBgColor} borderRadius="md" padding={4} maxHeight="200px" overflowY="auto">
+                <List>
+                  {searchResults.map((anime) => (
+                    <ListItem
+                      key={anime.mal_id}
+                      cursor="pointer"
+                      padding={2}
+                      _hover={{ bg: listItemHoverColor }}
+                      onClick={() => handleSelectedAnime(anime)}
+                    >
+                      {anime.title}
+                    </ListItem>
+                  ))}
+                </List>
               </Box>
-              <Box>
-                <HStack spacing={2} alignItems="center">
-                  <FormLabel
-                    fontWeight="bold"
-                    color={labelColor}
-                    marginBottom={0}
-                  >
-                    Status:
-                  </FormLabel>
-                  <Text>Status</Text>
-                </HStack>
-              </Box>
-              <Box>
-                <HStack spacing={2} alignItems="center">
-                  <FormLabel
-                    fontWeight="bold"
-                    color={labelColor}
-                    marginBottom={0}
-                  >
-                    Total Episodes:
-                  </FormLabel>
-                  <Text>0</Text>
-                </HStack>
-              </Box>
-            </HStack>
+            )}
 
-            <HStack>
+            {selectedAnime && (
+              <>
+                <HStack spacing={4} align="center">
+                  <Image src={poster} alt={selectedAnime.title} boxSize="300px" objectFit="cover" />
+                  <Box>
+                    <Text fontWeight="bold" color={labelColor}>
+                      {selectedAnime.title}
+                    </Text>
+                    <Text>{description}</Text>
+                  </Box>
+                </HStack>
+
+                <Box>
+                  <FormLabel fontWeight="bold" color={labelColor}>
+                    Genre
+                  </FormLabel>
+                  <Text>{genre.join(", ")}</Text>
+                </Box>
+
+                <HStack spacing={8} justify="center">
+                  <Box>
+                    <FormLabel fontWeight="bold" color={labelColor}>
+                      Year:
+                    </FormLabel>
+                    <Text>{year !== null ? year : "NaN"}</Text>
+                  </Box>
+                  <Box>
+                    <FormLabel fontWeight="bold" color={labelColor}>
+                      Status:
+                    </FormLabel>
+                    <Text>{status}</Text>
+                  </Box>
+                  <Box>
+                    <FormLabel fontWeight="bold" color={labelColor}>
+                      Total Episodes:
+                    </FormLabel>
+                    <Text>{totalEpisodes}</Text>
+                  </Box>
+                </HStack>
+
+          <HStack>
             <Box>
               <FormLabel fontWeight="bold" color={labelColor}>
                 Episodes Watched
               </FormLabel>
-              <NumberInput width="50%" min={0} isRequired>
+              <NumberInput width="50%" min={0} max={totalEpisodes}
+              onChange={(valueString) => setEpisodesWatched(parseInt(valueString))}
+              value={episodesWatched} isRequired>
                 <NumberInputField />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
@@ -120,7 +218,8 @@ export const AnimeRecordForm = () => {
               <FormLabel fontWeight="bold" color={labelColor}>
                 Watch Status
               </FormLabel>
-              <Select required width="120%">
+              <Select required width="120%" value={watchStatus}
+              onChange={(e) => setWatchStatus(e.target.value)}>
                 <option value="">Select a Status</option>
                 <option value="Watching">Watching</option>
                 <option value="On-Hold">On-Hold</option>
@@ -134,37 +233,43 @@ export const AnimeRecordForm = () => {
               <FormLabel fontWeight="bold" color={labelColor}>
                 Date of Completion
               </FormLabel>
-              <Input type="date" width="110%" />
+              <Input type="date" width="110%" value={completionDate}
+              onChange={(e) => setCompletionDate(e.target.value)} />
             </Box>
             </HStack>
 
-            <Box>
-              <FormLabel fontWeight="bold" color={labelColor}>
-                Rating
-              </FormLabel>
-              <HStack>
-              <ReactStars
-                count={5}
-                value={rating}
-                onChange={(newRating: number) => setRating(newRating)}
-                size={30}
-                color2={"#D91656"}
-              />
-              <span style={{ marginLeft: "10px", fontSize: "24px" }}>
-                {rating}
-              </span>
-              </HStack>
-            </Box>
+                <Box>
+                  <FormLabel fontWeight="bold" color={labelColor}>
+                    Rating
+                  </FormLabel>
+                  <HStack>
+                    <ReactStars
+                      count={5}
+                      value={rating}
+                      onChange={(newRating: number) => setRating(newRating)}
+                      size={30}
+                      color2={"#D91656"}
+                    />
+                    <span style={{ marginLeft: "10px", fontSize: "24px" }}>{rating}</span>
+                  </HStack>
+                </Box>
 
-            <Box>
-              <FormLabel fontWeight="bold" color={labelColor}>
-                Notes/Review
-              </FormLabel>
-              <Textarea width="100%" />
-            </Box>
+                <Box>
+                  <FormLabel fontWeight="bold" color={labelColor}>
+                    Notes/Review
+                  </FormLabel>
+                  <Textarea width="100%" value={notes} onChange={((e) => setNotes(e.target.value))}/>
+                </Box>
+              </>
+            )}
           </VStack>
+          </CardBody>
+      <CardFooter display={'flex'} justifyContent={'center'} alignItems={'center'}>
+        <Button type="submit" className="button" colorScheme="teal">
+          Create Watchlist
+        </Button>
+      </CardFooter>
         </form>
-      </CardBody>
     </Card>
   );
 };

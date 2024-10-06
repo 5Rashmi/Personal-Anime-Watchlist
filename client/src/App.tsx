@@ -4,6 +4,7 @@ import { Auth } from './pages/auth';
 import logo from '../img/logo.png'
 import { Button, Flex, useColorMode, Image } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
+import { AnimeRecordsProvider } from './contexts/anime-record-context';
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -20,7 +21,9 @@ function App() {
     <Router>
         <div className='app-container'>
           <Routes>
-            <Route path='/' element={<Dashboard />} />
+            <Route path='/' element={<AnimeRecordsProvider>
+              <Dashboard />
+            </AnimeRecordsProvider>} />
             <Route path='/auth' element={<Auth />} />
           </Routes>
         </div>

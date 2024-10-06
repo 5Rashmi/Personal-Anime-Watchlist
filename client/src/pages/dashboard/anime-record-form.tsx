@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import ReactStars from "react-stars";
 import axios from 'axios';
 import { useUser } from "@clerk/clerk-react";
+import { useAnimeRecords } from "../../contexts/anime-record-context";
 
 export const AnimeRecordForm = () => {
   const labelColor = useColorModeValue("teal.600", "teal.200");
@@ -49,6 +50,7 @@ export const AnimeRecordForm = () => {
   const [rating, setRating] = useState<number>(0);
   const [notes, setNotes] = useState<string>("");
   const [inputFocused, setInputFocused] = useState<boolean>(false);
+  const { addRecord } = useAnimeRecords();
 
   const { user } = useUser();
 
@@ -92,7 +94,7 @@ export const AnimeRecordForm = () => {
     event.preventDefault();
 
     const newRecord = {
-      userId: user?.id,
+      userId: user?.id ?? "",
       name: name,
       description: description,
       genre: genre,
@@ -105,6 +107,7 @@ export const AnimeRecordForm = () => {
       notes: notes
     };
 
+    addRecord(newRecord);
     setName("");
     setPoster("");
     setDescription("");
@@ -203,7 +206,7 @@ export const AnimeRecordForm = () => {
               <FormLabel fontWeight="bold" color={labelColor}>
                 Episodes Watched
               </FormLabel>
-              <NumberInput width="50%" min={0} max={totalEpisodes}
+              <NumberInput width="50%" min={0}
               onChange={(valueString) => setEpisodesWatched(parseInt(valueString))}
               value={episodesWatched} isRequired>
                 <NumberInputField />

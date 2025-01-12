@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/contexts/anime-record-context.tsx","./src/pages/auth/index.tsx","./src/pages/dashboard/anime-record-form.tsx","./src/pages/dashboard/anime-record-list.tsx","./src/pages/dashboard/index.tsx"],"version":"5.6.2"}

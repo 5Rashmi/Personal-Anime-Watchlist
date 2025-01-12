@@ -1,3 +1,9 @@
+// import { useAnimeRecords } from "../../contexts/anime-record-context"
+
+
 export const AnimeRecordList = () => {
-    return <div> Record List </div>
+    // const { records } = useAnimeRecords();
+    return (<div className="table-container">
+         Record List 
+         </div>);
 }

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface AnimeRecord {
     id?: string;
@@ -32,6 +33,21 @@ export const AnimeRecordsProvider = ({
     children: React.ReactNode;
 }) => {
     const [records, setRecords] = useState<AnimeRecord[]>([]);
+    const { user } = useUser();
+
+    const fetchRecords = async () => {
+        if (!user) return;
+        const response = await fetch(`http://localhost:3002/anime-records/getAllByUserID/${user?.id}`);
+        if (response.ok) {
+            const records = await response.json();
+            setRecords(records);
+        }
+    };
+
+    useEffect(() => {
+        fetchRecords();
+    }, [user]);
+
     const addRecord = async (record: AnimeRecord) => {
         console.log('Adding record: ',record);
   

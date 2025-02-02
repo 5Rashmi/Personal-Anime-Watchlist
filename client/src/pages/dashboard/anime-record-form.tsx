@@ -20,12 +20,23 @@ import {
   CardFooter,
   List,
   ListItem,
+  InputRightElement,
+  InputGroup,
+  IconButton,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ReactStars from "react-stars";
 import axios from 'axios';
 import { useUser } from "@clerk/clerk-react";
 import { useAnimeRecords } from "../../contexts/anime-record-context";
+import { CloseIcon } from "@chakra-ui/icons";
 
 export const AnimeRecordForm = () => {
   const labelColor = useColorModeValue("teal.600", "teal.200");
@@ -50,9 +61,19 @@ export const AnimeRecordForm = () => {
   const [rating, setRating] = useState<number>(0);
   const [notes, setNotes] = useState<string>("");
   const [inputFocused, setInputFocused] = useState<boolean>(false);
+  const [maxDate, setMaxDate] = useState<string>("");
+  const {isOpen, onOpen, onClose} = useDisclosure();
+  const [watchlistErrorMessage, setWatchlistErrorMessage] = useState("");
   const { addRecord } = useAnimeRecords();
 
   const { user } = useUser();
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+  let today = new Date();
+  const now = today.toISOString().split('T')[0];
+  setMaxDate(now);
+  })
 
   const handleSearchAnime = async (query: string) => {
     if (!query) {
@@ -77,6 +98,7 @@ export const AnimeRecordForm = () => {
   }, [name, selectedAnime, inputFocused]);
 
   const handleSelectedAnime = (anime: any) => {
+    handleShowForm();
     setSelectedAnime(anime);
     setName(anime.title);
     setPoster(anime.images.jpg.large_image_url);
@@ -107,7 +129,14 @@ export const AnimeRecordForm = () => {
       notes: notes
     };
 
-    addRecord(newRecord);
+    if(user) {
+      addRecord(newRecord);
+    }
+    else {
+      setWatchlistErrorMessage("Please Login/Sign Up first to create the watchlist");
+      onOpen();
+    };
+    
     setName("");
     setPoster("");
     setDescription("");
@@ -120,7 +149,17 @@ export const AnimeRecordForm = () => {
     setCompletionDate('');
     setRating(0);
     setNotes('');
+
+    setIsVisible(false);
   };
+
+  const handleShowForm = () => {
+    setIsVisible(true); // Set visibility to true to show the fields again
+  };
+
+  const handleClearSearch = () => {
+    setName("");
+  }
 
   return (
     <Card className="form-container" width="auto" justify={"center"} boxShadow={cardShadow} margin={7}>
@@ -131,17 +170,30 @@ export const AnimeRecordForm = () => {
             <FormLabel fontWeight="bold" color={labelColor} mb={0}>
                 Name
               </FormLabel>
+              <InputGroup width="60%">
               <Input
+                marginRight='0'
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Search for anime by name and select from the list below..."
-                width="60%"
+                width="100%"
                 required
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </HStack>
+              <InputRightElement style={{marginRight: '0'}}>
+              <IconButton 
+              aria-label="clear-input"
+              icon={<CloseIcon />}
+              onClick={handleClearSearch}
+              variant="link"
+              size="sm"
+              style={{padding: '0', margin: '0'}}
+              />
+              </InputRightElement>
+              </InputGroup>
+              </HStack>
 
             {searchResults.length > 0 && (
               <Box bg={listBgColor} borderRadius="md" padding={4} maxHeight="200px" overflowY="auto">
@@ -161,7 +213,7 @@ export const AnimeRecordForm = () => {
               </Box>
             )}
 
-            {selectedAnime && (
+            {selectedAnime && isVisible && (
               <>
                 <HStack spacing={4} align="center">
                   <Image src={poster} alt={selectedAnime.title} boxSize="300px" objectFit="cover" />
@@ -179,28 +231,35 @@ export const AnimeRecordForm = () => {
                   </FormLabel>
                   <Text>{genre.join(", ")}</Text>
                 </Box>
-
+                <Box borderColor={"teal-600"}
+                borderWidth={"2px"}
+                width={"100%"}
+                />
                 <HStack spacing={8} justify="center">
                   <Box>
-                    <FormLabel fontWeight="bold" color={labelColor}>
-                      Year:
+                    <FormLabel fontWeight="bold" color={labelColor} textAlign={"center"}>
+                      Year
                     </FormLabel>
                     <Text>{year !== null ? year : "NaN"}</Text>
                   </Box>
                   <Box>
-                    <FormLabel fontWeight="bold" color={labelColor}>
-                      Status:
+                    <FormLabel fontWeight="bold" color={labelColor} textAlign={"center"}>
+                      Status
                     </FormLabel>
-                    <Text>{status}</Text>
+                    <Text textAlign={"center"}>{status}</Text>
                   </Box>
                   <Box>
                     <FormLabel fontWeight="bold" color={labelColor}>
-                      Total Episodes:
+                      Total Episodes
                     </FormLabel>
-                    <Text>{totalEpisodes}</Text>
+                    <Text textAlign={"center"}>{totalEpisodes}</Text>
                   </Box>
                 </HStack>
 
+                <Box borderColor={"teal-600"}
+                borderWidth={"2px"}
+                width={"100%"}
+                />
           <HStack>
             <Box>
               <FormLabel fontWeight="bold" color={labelColor}>
@@ -236,7 +295,7 @@ export const AnimeRecordForm = () => {
               <FormLabel fontWeight="bold" color={labelColor}>
                 Date of Completion
               </FormLabel>
-              <Input type="date" width="110%" value={completionDate}
+              <Input type="date" width="110%" value={completionDate} max={maxDate}
               onChange={(e) => setCompletionDate(e.target.value)} />
             </Box>
             </HStack>
@@ -271,6 +330,16 @@ export const AnimeRecordForm = () => {
         <Button type="submit" className="button" colorScheme="teal">
           Create Watchlist
         </Button>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Header</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text>{watchlistErrorMessage}</Text>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
       </CardFooter>
         </form>
     </Card>

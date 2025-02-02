@@ -1,4 +1,4 @@
-import { BrowserRouter as Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Dashboard } from './pages/dashboard';
 import { Auth } from './pages/auth';
 import logo from '../img/logo.png'

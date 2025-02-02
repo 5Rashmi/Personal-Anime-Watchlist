@@ -15,11 +15,11 @@ if (!PUBLISHABLE_KEY) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
-    <ChakraProvider>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <ChakraProvider>
     <App />
-    </ClerkProvider>
     </ChakraProvider>
+    </ClerkProvider>
     </Router>
   </StrictMode>,
 )

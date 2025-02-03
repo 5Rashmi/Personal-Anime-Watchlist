@@ -15,8 +15,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "mongoose": "^8.7.0",
-    "nodemon": "^3.1.7",
-    "ts": "^0.2.2"
+    "nodemon": "^3.1.7"
   },
   "devDependencies": {
     "@types/mongoose": "^5.11.97",

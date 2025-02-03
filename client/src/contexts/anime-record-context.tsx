@@ -34,10 +34,12 @@ export const AnimeRecordsProvider = ({
 }) => {
     const [records, setRecords] = useState<AnimeRecord[]>([]);
     const { user } = useUser();
+    const url = "https://personal-anime-watchlist-backend.onrender.com";
+    // const url = "http://localhost:3002";
 
     const fetchRecords = async () => {
         if (!user) return;
-        const response = await fetch(`http://localhost:3002/anime-records/getAllByUserID/${user?.id}`);
+        const response = await fetch(`${url}/anime-records/getAllByUserID/${user?.id}`);
         if (response.ok) {
             const records = await response.json();
             setRecords(records);
@@ -51,7 +53,7 @@ export const AnimeRecordsProvider = ({
     const addRecord = async (record: AnimeRecord) => {
         console.log('Adding record: ',record);
   
-        const response = await fetch("http://localhost:3002/anime-records", {
+        const response = await fetch(`${url}/anime-records`, {
             method: 'POST',
             body: JSON.stringify(record),
             headers: {

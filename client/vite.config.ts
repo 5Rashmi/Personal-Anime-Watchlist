@@ -1,13 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const url = "https://personal-anime-watchlist-backend.onrender.com";
+// const url = "http://localhost:3002";
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
         '/anime-records': {
-            target: 'http://localhost:3002',
+            target: url,
             changeOrigin: true,
         },
     },

@@ -19,8 +19,11 @@ router.get("/getAllByUserID/:userId", async (req: Request, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
     try {
         const newRecordBody = req.body;
+        console.log("Request body: ", newRecordBody);
+
         const newRecord = new animeRecordModel(newRecordBody);
         const savedRecord = await newRecord.save();
+        
         res.status(200).send(savedRecord);
     } catch (err) {
         console.error('Error in POST /anime-records: ', err);

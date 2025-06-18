@@ -22,7 +22,7 @@ const animeRecordSchema = new mongoose.Schema<AnimeRecord>({
     genre: { type: [String], required: true },
     year: { type: Number, required: false },
     status: { type: String, required: false },
-    totalEpisodes: { type: Number, required: true },
+    totalEpisodes: { type: Number, required: false, default: null },
     episodesWatched: { type: Number, required: true },
     watchStatus: { type: String, required: true },
     dateOfCompletion: { type: Date, required: false },

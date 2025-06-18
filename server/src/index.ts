@@ -17,7 +17,7 @@ if (!mongoURI) {
   throw new Error("MONGO_URI is not defined in the environment variables.");
 }
 
-mongoose.connect(mongoURI)
+mongoose.connect(mongoURI || "")
 .then(() => console.log("Connected to MongoDB!"))
 .catch((err) => console.error('Failed to connect to MongoDB: ', err));
 

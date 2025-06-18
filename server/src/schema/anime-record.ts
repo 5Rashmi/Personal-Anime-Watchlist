@@ -18,7 +18,7 @@ interface AnimeRecord {
 const animeRecordSchema = new mongoose.Schema<AnimeRecord>({
     userId: { type: String, required: true, index: true },
     name: { type: String, required: true }, 
-    description: { type: String, required: true },
+    description: { type: String, required: false },
     genre: { type: [String], required: true },
     year: { type: Number, required: false },
     status: { type: String, required: false },

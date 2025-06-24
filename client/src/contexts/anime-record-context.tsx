@@ -20,6 +20,7 @@ interface AnimeRecord {
 interface AnimeRecordsContextType {
   records: AnimeRecord[];
   addRecord: (record: AnimeRecord) => void;
+  fetchRecords: () => Promise<void>;
   // updateRecord: (id: string, newRecord: AnimeRecord) => void;
   // deleteRecord: (id: string) => void;
 }
@@ -72,7 +73,7 @@ export const AnimeRecordsProvider = ({
     }
   };
   return (
-    <AnimeRecordsContext.Provider value={{ records, addRecord }}>
+    <AnimeRecordsContext.Provider value={{ records, addRecord, fetchRecords }}>
       {" "}
       {children}
     </AnimeRecordsContext.Provider>

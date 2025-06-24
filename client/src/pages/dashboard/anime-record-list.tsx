@@ -14,9 +14,11 @@ import {
   SimpleGrid,
   Text,
   useColorModeValue,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import EditModal from "../../components/EditModal";
 
 export const AnimeRecordList = () => {
   const [records, setRecords] = useState<AnimeRecord[]>([]);
@@ -24,6 +26,16 @@ export const AnimeRecordList = () => {
   const labelColor = useColorModeValue("teal.600", "teal.200");
   const userId = user?.id;
   const url = "https://personal-anime-watchlist-backend.onrender.com";
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedRecord, setSelectedRecord] = useState<AnimeRecord | null>(
+    null
+  );
+  const [editForm, setEditForm] = useState({
+    notes: "",
+    episodesWatched: null as number | null,
+    watchStatus: "",
+    rating: null as number | null,
+  });
 
   useEffect(() => {
     if (userId) {
@@ -39,6 +51,38 @@ export const AnimeRecordList = () => {
       setRecords(res.data);
     } catch (err) {
       console.error("Error fetching records:", err);
+    }
+  };
+
+  const handleEdit = (record: AnimeRecord) => {
+    setSelectedRecord(record);
+    setEditForm({
+      notes: record.notes || "",
+      episodesWatched: record.episodesWatched ?? null,
+      watchStatus: record.watchStatus || "",
+      rating: record.rating ?? null,
+    });
+
+    onOpen();
+  };
+
+  const handleUpdate = async () => {
+    if (!selectedRecord) return;
+    try {
+      const updated = {
+        ...selectedRecord,
+        ...editForm,
+      };
+      const res = await axios.put(
+        `${url}/anime-records/${selectedRecord._id}`,
+        updated
+      );
+      setRecords((prev) =>
+        prev.map((r) => (r._id === selectedRecord._id ? res.data : r))
+      );
+      onClose();
+    } catch (err) {
+      console.error("Update failed:", err);
     }
   };
 
@@ -166,20 +210,39 @@ export const AnimeRecordList = () => {
                 </Box>
 
                 <IconButton
+                  icon={<EditIcon />}
+                  aria-label="Edit record"
+                  onClick={() => handleEdit(record)}
+                  size="sm"
+                  bg="#1E3A8A"
+                  color="white"
+                  variant="solid"
+                  position="absolute"
+                  top={2}
+                  right={12}
+                  borderRadius="full"
+                  zIndex={10}
+                  _hover={{
+                    bg: "#1D4ED8",
+                    transform: "scale(1.1)",
+                  }}
+                />
+
+                <IconButton
                   icon={<DeleteIcon />}
                   aria-label="Delete record"
                   onClick={() => deleteRecord(record._id)}
                   size="sm"
-                  colorScheme="red"
-                  variant="ghost"
+                  bg="#7F1D1D"
+                  color="white"
+                  variant="solid"
                   position="absolute"
                   top={2}
                   right={2}
                   borderRadius="full"
                   zIndex={10}
                   _hover={{
-                    bg: "red.600",
-                    color: "white",
+                    bg: "#DC2626",
                     transform: "scale(1.1)",
                   }}
                 />
@@ -188,6 +251,14 @@ export const AnimeRecordList = () => {
           ))}
         </SimpleGrid>
       )}
+
+      <EditModal
+        isOpen={isOpen}
+        onClose={onClose}
+        editForm={editForm}
+        setEditForm={setEditForm}
+        handleUpdate={handleUpdate}
+      />
     </Box>
   );
 };

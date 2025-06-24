@@ -64,7 +64,7 @@ export const AnimeRecordForm = () => {
   const [maxDate, setMaxDate] = useState<string>("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [watchlistErrorMessage, setWatchlistErrorMessage] = useState("");
-  const { addRecord } = useAnimeRecords();
+  const { addRecord, fetchRecords } = useAnimeRecords();
 
   const { user } = useUser();
   const [isVisible, setIsVisible] = useState(true);
@@ -134,6 +134,7 @@ export const AnimeRecordForm = () => {
 
     if (user) {
       addRecord(newRecord);
+      fetchRecords();
     } else {
       setWatchlistErrorMessage(
         "Please Login/Sign Up first to create the watchlist"
@@ -158,7 +159,7 @@ export const AnimeRecordForm = () => {
   };
 
   const handleShowForm = () => {
-    setIsVisible(true); // Set visibility to true to show the fields again
+    setIsVisible(true);
   };
 
   const handleClearSearch = () => {

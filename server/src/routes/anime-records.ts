@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/getAllByUserID/:userId", async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId;
-        const records = await animeRecordModel.find({userId: userId});
+        const records = await animeRecordModel.find({userId: userId}).sort({createdAt: -1});
         if (records.length === 0) {
             res.status(404).send("No records found for the user.");
         }
@@ -18,9 +18,7 @@ router.get("/getAllByUserID/:userId", async (req: Request, res: Response) => {
 
 router.post("/", async (req: Request, res: Response) => {
     try {
-        console.log("Incoming body:", req.body);
         const newRecordBody = req.body;
-        console.log("Request body: ", newRecordBody);
 
         const newRecord = new animeRecordModel(newRecordBody);
         const savedRecord = await newRecord.save();

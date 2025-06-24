@@ -29,11 +29,11 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalCloseButton
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ReactStars from "react-stars";
-import axios from 'axios';
+import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
 import { useAnimeRecords } from "../../contexts/anime-record-context";
 import { CloseIcon } from "@chakra-ui/icons";
@@ -62,7 +62,7 @@ export const AnimeRecordForm = () => {
   const [notes, setNotes] = useState<string>("");
   const [inputFocused, setInputFocused] = useState<boolean>(false);
   const [maxDate, setMaxDate] = useState<string>("");
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [watchlistErrorMessage, setWatchlistErrorMessage] = useState("");
   const { addRecord } = useAnimeRecords();
 
@@ -70,10 +70,10 @@ export const AnimeRecordForm = () => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-  let today = new Date();
-  const now = today.toISOString().split('T')[0];
-  setMaxDate(now);
-  })
+    let today = new Date();
+    const now = today.toISOString().split("T")[0];
+    setMaxDate(now);
+  });
 
   const handleSearchAnime = async (query: string) => {
     if (!query) {
@@ -81,7 +81,9 @@ export const AnimeRecordForm = () => {
       return;
     }
     try {
-      const response = await axios.get(`https://api.jikan.moe/v4/anime?q=${query}`);
+      const response = await axios.get(
+        `https://api.jikan.moe/v4/anime?q=${query}`
+      );
       setSearchResults(response.data.data);
     } catch (error) {
       console.error("Error fetching data from Jikan API ", error);
@@ -108,7 +110,7 @@ export const AnimeRecordForm = () => {
     setStatus(anime.status);
     setTotalEpisodes(anime.episodes);
     setEpisodesWatched(0);
-    setWatchStatus('');
+    setWatchStatus("");
     setSearchResults([]);
   };
 
@@ -118,6 +120,7 @@ export const AnimeRecordForm = () => {
     const newRecord = {
       userId: user?.id ?? "",
       name: name,
+      posterUrl: poster,
       description: description,
       genre: genre,
       year: year,
@@ -126,17 +129,18 @@ export const AnimeRecordForm = () => {
       episodesWatched: episodesWatched,
       watchStatus: watchStatus,
       rating: rating,
-      notes: notes
+      notes: notes,
     };
 
-    if(user) {
+    if (user) {
       addRecord(newRecord);
-    }
-    else {
-      setWatchlistErrorMessage("Please Login/Sign Up first to create the watchlist");
+    } else {
+      setWatchlistErrorMessage(
+        "Please Login/Sign Up first to create the watchlist"
+      );
       onOpen();
-    };
-    
+    }
+
     setName("");
     setPoster("");
     setDescription("");
@@ -145,10 +149,10 @@ export const AnimeRecordForm = () => {
     setStatus("");
     setTotalEpisodes(0);
     setEpisodesWatched(0);
-    setWatchStatus('');
-    setCompletionDate('');
+    setWatchStatus("");
+    setCompletionDate("");
     setRating(0);
-    setNotes('');
+    setNotes("");
 
     setIsVisible(false);
   };
@@ -159,44 +163,56 @@ export const AnimeRecordForm = () => {
 
   const handleClearSearch = () => {
     setName("");
-  }
+  };
 
   return (
-    <Card className="form-container" width="auto" justify={"center"} boxShadow={cardShadow} margin={7}>
+    <Card
+      className="form-container"
+      width="auto"
+      justify={"center"}
+      boxShadow={cardShadow}
+      margin={7}
+    >
       <form onSubmit={handleSubmit}>
-      <CardBody bg={bgColor} padding={8} borderRadius="lg">
+        <CardBody bg={bgColor} padding={8} borderRadius="lg">
           <VStack spacing={4} align="stretch">
             <HStack>
-            <FormLabel fontWeight="bold" color={labelColor} mb={0}>
+              <FormLabel fontWeight="bold" color={labelColor} mb={0}>
                 Name
               </FormLabel>
               <InputGroup width="60%">
-              <Input
-                marginRight='0'
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Search for anime by name and select from the list below..."
-                width="100%"
-                required
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-              <InputRightElement style={{marginRight: '0'}}>
-              <IconButton 
-              aria-label="clear-input"
-              icon={<CloseIcon />}
-              onClick={handleClearSearch}
-              variant="link"
-              size="sm"
-              style={{padding: '0', margin: '0'}}
-              />
-              </InputRightElement>
+                <Input
+                  marginRight="0"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Search for anime by name and select from the list below..."
+                  width="100%"
+                  required
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
+                />
+                <InputRightElement style={{ marginRight: "0" }}>
+                  <IconButton
+                    aria-label="clear-input"
+                    icon={<CloseIcon />}
+                    onClick={handleClearSearch}
+                    variant="link"
+                    size="sm"
+                    style={{ padding: "0", margin: "0" }}
+                  />
+                </InputRightElement>
               </InputGroup>
-              </HStack>
+            </HStack>
 
             {searchResults.length > 0 && (
-              <Box bg={listBgColor} borderRadius="md" padding={4} maxHeight="200px" overflowY="auto">
+              <Box
+                bg={listBgColor}
+                borderRadius="md"
+                padding={4}
+                maxHeight="200px"
+                overflowY="auto"
+              >
                 <List>
                   {searchResults.map((anime) => (
                     <ListItem
@@ -216,7 +232,12 @@ export const AnimeRecordForm = () => {
             {selectedAnime && isVisible && (
               <>
                 <HStack spacing={4} align="center">
-                  <Image src={poster} alt={selectedAnime.title} boxSize="300px" objectFit="cover" />
+                  <Image
+                    src={poster}
+                    alt={selectedAnime.title}
+                    boxSize="300px"
+                    objectFit="cover"
+                  />
                   <Box>
                     <Text fontWeight="bold" color={labelColor}>
                       {selectedAnime.title}
@@ -231,19 +252,28 @@ export const AnimeRecordForm = () => {
                   </FormLabel>
                   <Text>{genre.join(", ")}</Text>
                 </Box>
-                <Box borderColor={"teal-600"}
-                borderWidth={"2px"}
-                width={"100%"}
+                <Box
+                  borderColor={"teal-600"}
+                  borderWidth={"2px"}
+                  width={"100%"}
                 />
                 <HStack spacing={8} justify="center">
                   <Box>
-                    <FormLabel fontWeight="bold" color={labelColor} textAlign={"center"}>
+                    <FormLabel
+                      fontWeight="bold"
+                      color={labelColor}
+                      textAlign={"center"}
+                    >
                       Year
                     </FormLabel>
                     <Text>{year !== null ? year : "NaN"}</Text>
                   </Box>
                   <Box>
-                    <FormLabel fontWeight="bold" color={labelColor} textAlign={"center"}>
+                    <FormLabel
+                      fontWeight="bold"
+                      color={labelColor}
+                      textAlign={"center"}
+                    >
                       Status
                     </FormLabel>
                     <Text textAlign={"center"}>{status}</Text>
@@ -256,49 +286,65 @@ export const AnimeRecordForm = () => {
                   </Box>
                 </HStack>
 
-                <Box borderColor={"teal-600"}
-                borderWidth={"2px"}
-                width={"100%"}
+                <Box
+                  borderColor={"teal-600"}
+                  borderWidth={"2px"}
+                  width={"100%"}
                 />
-          <HStack>
-            <Box>
-              <FormLabel fontWeight="bold" color={labelColor}>
-                Episodes Watched
-              </FormLabel>
-              <NumberInput width="50%" min={0}
-              onChange={(valueString) => setEpisodesWatched(parseInt(valueString))}
-              value={episodesWatched} isRequired>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </Box>
+                <HStack>
+                  <Box>
+                    <FormLabel fontWeight="bold" color={labelColor}>
+                      Episodes Watched
+                    </FormLabel>
+                    <NumberInput
+                      width="50%"
+                      min={0}
+                      onChange={(valueString) =>
+                        setEpisodesWatched(parseInt(valueString))
+                      }
+                      value={episodesWatched}
+                      isRequired
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </Box>
 
-            <Box pl={10}>
-              <FormLabel fontWeight="bold" color={labelColor}>
-                Watch Status
-              </FormLabel>
-              <Select required width="120%" value={watchStatus}
-              onChange={(e) => setWatchStatus(e.target.value)}>
-                <option value="">Select a Status</option>
-                <option value="Watching">Watching</option>
-                <option value="On-Hold">On-Hold</option>
-                <option value="Plan to Watch">Plan to Watch</option>
-                <option value="Dropped">Dropped</option>
-                <option value="Completed">Completed</option>
-              </Select>
-            </Box>
+                  <Box pl={10}>
+                    <FormLabel fontWeight="bold" color={labelColor}>
+                      Watch Status
+                    </FormLabel>
+                    <Select
+                      required
+                      width="120%"
+                      value={watchStatus}
+                      onChange={(e) => setWatchStatus(e.target.value)}
+                    >
+                      <option value="">Select a Status</option>
+                      <option value="Watching">Watching</option>
+                      <option value="On-Hold">On-Hold</option>
+                      <option value="Plan to Watch">Plan to Watch</option>
+                      <option value="Dropped">Dropped</option>
+                      <option value="Completed">Completed</option>
+                    </Select>
+                  </Box>
 
-            <Box pl={40}>
-              <FormLabel fontWeight="bold" color={labelColor}>
-                Date of Completion
-              </FormLabel>
-              <Input type="date" width="110%" value={completionDate} max={maxDate}
-              onChange={(e) => setCompletionDate(e.target.value)} />
-            </Box>
-            </HStack>
+                  <Box pl={40}>
+                    <FormLabel fontWeight="bold" color={labelColor}>
+                      Date of Completion
+                    </FormLabel>
+                    <Input
+                      type="date"
+                      width="110%"
+                      value={completionDate}
+                      max={maxDate}
+                      onChange={(e) => setCompletionDate(e.target.value)}
+                    />
+                  </Box>
+                </HStack>
 
                 <Box>
                   <FormLabel fontWeight="bold" color={labelColor}>
@@ -312,7 +358,9 @@ export const AnimeRecordForm = () => {
                       size={30}
                       color2={"#D91656"}
                     />
-                    <span style={{ marginLeft: "10px", fontSize: "24px" }}>{rating}</span>
+                    <span style={{ marginLeft: "10px", fontSize: "24px" }}>
+                      {rating}
+                    </span>
                   </HStack>
                 </Box>
 
@@ -320,28 +368,36 @@ export const AnimeRecordForm = () => {
                   <FormLabel fontWeight="bold" color={labelColor}>
                     Notes/Review
                   </FormLabel>
-                  <Textarea width="100%" value={notes} onChange={((e) => setNotes(e.target.value))}/>
+                  <Textarea
+                    width="100%"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
                 </Box>
               </>
             )}
           </VStack>
-          </CardBody>
-      <CardFooter display={'flex'} justifyContent={'center'} alignItems={'center'}>
-        <Button type="submit" className="button" colorScheme="teal">
-          Create Watchlist
-        </Button>
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Header</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text>{watchlistErrorMessage}</Text>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-      </CardFooter>
-        </form>
+        </CardBody>
+        <CardFooter
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Button type="submit" className="button" colorScheme="teal">
+            Create Watchlist
+          </Button>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Header</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Text>{watchlistErrorMessage}</Text>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+        </CardFooter>
+      </form>
     </Card>
   );
 };

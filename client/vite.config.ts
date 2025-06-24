@@ -12,7 +12,7 @@ export default defineConfig({
         '/anime-records': {
             target: url,
             changeOrigin: true,
-        },
+        }
     },
 },
 })

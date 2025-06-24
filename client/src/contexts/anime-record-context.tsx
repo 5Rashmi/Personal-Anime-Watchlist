@@ -2,91 +2,91 @@ import { useUser } from "@clerk/clerk-react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface AnimeRecord {
-    id?: string;
-    userId: string;
-    name: string;
-    description: string;
-    genre: string[];
-    year?: number | null;
-    status?: string;
-    totalEpisodes: number;
-    episodesWatched: number;
-    watchStatus: string;
-    dateOfCompletion?: Date;
-    rating: number;
-    notes?: string;
+  id?: string;
+  userId: string;
+  name: string;
+  description: string;
+  genre: string[];
+  year?: number | null;
+  status?: string;
+  totalEpisodes: number;
+  episodesWatched: number;
+  watchStatus: string;
+  dateOfCompletion?: Date;
+  rating: number;
+  notes?: string;
 }
 
 interface AnimeRecordsContextType {
-    records: AnimeRecord[];
-    addRecord: (record: AnimeRecord) => void;
-    // updateRecord: (id: string, newRecord: AnimeRecord) => void;
-    // deleteRecord: (id: string) => void;
+  records: AnimeRecord[];
+  addRecord: (record: AnimeRecord) => void;
+  // updateRecord: (id: string, newRecord: AnimeRecord) => void;
+  // deleteRecord: (id: string) => void;
 }
 
 export const AnimeRecordsContext = createContext<
-AnimeRecordsContextType | undefined>(undefined);
+  AnimeRecordsContextType | undefined
+>(undefined);
 
 export const AnimeRecordsProvider = ({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) => {
-    const [records, setRecords] = useState<AnimeRecord[]>([]);
-    const { user } = useUser();
-    const url = "https://personal-anime-watchlist-backend.onrender.com";
-    // const url = "http://localhost:3002";
+  const [records, setRecords] = useState<AnimeRecord[]>([]);
+  const { user } = useUser();
+  const url = "https://personal-anime-watchlist-backend.onrender.com";
+  // const url = "http://localhost:3002";
 
-    const fetchRecords = async () => {
-        if (!user) return;
-        const response = await fetch(`${url}/anime-records/getAllByUserID/${user?.id}`);
-        if (response.ok) {
-            const records = await response.json();
-            setRecords(records);
-        }
-    };
-
-    useEffect(() => {
-        fetchRecords();
-    }, [user]);
-
-    const addRecord = async (record: AnimeRecord) => {
-        console.log('Adding record: ',record);
-  
-        const response = await fetch(`${url}/anime-records`, {
-            method: 'POST',
-            body: JSON.stringify(record),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        try{
-            if (response.ok) {
-                const newRecord = await response.json();
-                setRecords((prev) => [...prev, newRecord]);
-            
-            }
-        } catch (err) {
-            console.error('Network or server error: ', err);
-        }
-    };
-    return (
-        <AnimeRecordsContext.Provider value={{records, addRecord}}>
-            {" "}
-            {children}
-        </AnimeRecordsContext.Provider>
+  const fetchRecords = async () => {
+    if (!user) return;
+    const response = await fetch(
+      `${url}/anime-records/getAllByUserID/${user?.id}`
     );
+    if (response.ok) {
+      const records = await response.json();
+      setRecords(records);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecords();
+  }, [user]);
+
+  const addRecord = async (record: AnimeRecord) => {
+    const response = await fetch(`${url}/anime-records`, {
+      method: "POST",
+      body: JSON.stringify(record),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    try {
+      if (response.ok) {
+        const newRecord = await response.json();
+        setRecords((prev) => [...prev, newRecord]);
+      }
+    } catch (err) {
+      console.error("Network or server error: ", err);
+    }
+  };
+  return (
+    <AnimeRecordsContext.Provider value={{ records, addRecord }}>
+      {" "}
+      {children}
+    </AnimeRecordsContext.Provider>
+  );
 };
 
 export const useAnimeRecords = () => {
-    const context = useContext<AnimeRecordsContextType | undefined>(
-        AnimeRecordsContext
+  const context = useContext<AnimeRecordsContextType | undefined>(
+    AnimeRecordsContext
+  );
+  if (!context) {
+    throw new Error(
+      "useAnimeRecords must be used within a AnimeRecordsProvider"
     );
-    if(!context) {
-        throw new Error(
-            "useAnimeRecords must be used within a AnimeRecordsProvider"
-        );
-    }
-    return context;
-}
+  }
+  return context;
+};

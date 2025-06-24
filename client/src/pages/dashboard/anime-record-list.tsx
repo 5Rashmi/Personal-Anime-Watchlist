@@ -23,6 +23,7 @@ export const AnimeRecordList = () => {
   const { user } = useUser();
   const labelColor = useColorModeValue("teal.600", "teal.200");
   const userId = user?.id;
+  const url = "https://personal-anime-watchlist-backend.onrender.com";
 
   useEffect(() => {
     if (userId) {
@@ -32,7 +33,9 @@ export const AnimeRecordList = () => {
 
   const fetchRecords = async () => {
     try {
-      const res = await axios.get(`/anime-records/getAllByUserID/${userId}`);
+      const res = await axios.get(
+        `${url}/anime-records/getAllByUserID/${userId}`
+      );
       setRecords(res.data);
     } catch (err) {
       console.error("Error fetching records:", err);
@@ -41,7 +44,7 @@ export const AnimeRecordList = () => {
 
   const deleteRecord = async (id: string) => {
     try {
-      await axios.delete(`/anime-records/${id}`);
+      await axios.delete(`${url}/anime-records/${id}`);
       setRecords((prev) => prev.filter((r) => r._id !== id));
     } catch (err) {
       console.error("Error deleting record:", err);

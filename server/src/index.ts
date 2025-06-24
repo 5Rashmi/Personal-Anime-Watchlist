@@ -8,7 +8,22 @@ const app: Express = express();
 const port = process.env.PORT || 3002;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://personal-anime-watchlist-frontend.onrender.com",
+        "https://personal-anime-watchlist-backend.onrender.com"
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST"],
+    credentials: true,
+  }));
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;

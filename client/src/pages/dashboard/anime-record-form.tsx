@@ -300,6 +300,7 @@ export const AnimeRecordForm = () => {
                     <NumberInput
                       width="50%"
                       min={0}
+                      max={totalEpisodes}
                       onChange={(valueString) =>
                         setEpisodesWatched(parseInt(valueString))
                       }
@@ -311,7 +312,7 @@ export const AnimeRecordForm = () => {
                         <NumberIncrementStepper />
                         <NumberDecrementStepper />
                       </NumberInputStepper>
-                    </NumberInput>
+                    </NumberInput>{" "}
                   </Box>
 
                   <Box pl={10}>

@@ -1,6 +1,7 @@
 export interface EditFormState {
   notes: string;
   episodesWatched: number | null;
+  totalEpisodes: number | null;
   watchStatus: string;
   rating: number | null;
 }

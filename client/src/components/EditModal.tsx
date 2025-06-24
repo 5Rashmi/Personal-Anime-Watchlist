@@ -39,19 +39,26 @@ const EditModal: React.FC<EditModalProps> = ({
               setEditForm({ ...editForm, notes: e.target.value })
             }
           />
-          <Input
-            type="number"
-            placeholder="Episodes Watched"
-            value={editForm.episodesWatched ?? ""}
-            onChange={(e) =>
-              setEditForm({
-                ...editForm,
-                episodesWatched: e.target.value
-                  ? parseInt(e.target.value)
-                  : null,
-              })
-            }
-          />
+          <HStack>
+            <Input
+              type="number"
+              placeholder="Episodes Watched"
+              value={editForm.episodesWatched ?? ""}
+              min={0}
+              max={editForm.totalEpisodes || Infinity}
+              onChange={(e) =>
+                setEditForm({
+                  ...editForm,
+                  episodesWatched: e.target.value
+                    ? parseInt(e.target.value)
+                    : null,
+                })
+              }
+            />
+            <text style={{ paddingRight: "12em" }}>
+              /{editForm.totalEpisodes}
+            </text>
+          </HStack>
           <Select
             placeholder="Select Watch Status"
             value={editForm.watchStatus}

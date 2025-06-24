@@ -35,6 +35,7 @@ export const AnimeRecordList = () => {
     episodesWatched: null as number | null,
     watchStatus: "",
     rating: null as number | null,
+    totalEpisodes: null as number | null,
   });
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export const AnimeRecordList = () => {
       episodesWatched: record.episodesWatched ?? null,
       watchStatus: record.watchStatus || "",
       rating: record.rating ?? null,
+      totalEpisodes: record.totalEpisodes ?? null,
     });
 
     onOpen();
@@ -153,7 +155,7 @@ export const AnimeRecordList = () => {
                     color="gray.300"
                     borderRadius="md"
                     p={2}
-                    maxH="80px"
+                    maxH="100px"
                     overflowY="auto"
                     bg="rgba(255,255,255,0.05)"
                     className="scrollbar-custom"
@@ -177,10 +179,18 @@ export const AnimeRecordList = () => {
                     <b>Status:</b> {record.watchStatus}
                   </Text>
                   <Text>
-                    <b>Rating:</b> {record.rating}/10
+                    <b>Rating:</b> {record.rating}/5
                   </Text>
                   <Text>
                     <b>Year:</b> {record.year ?? "-"}
+                  </Text>
+                  <Text
+                    maxH="40px"
+                    overflowY="auto"
+                    bg="rgba(255,255,255,0.05)"
+                    className="scrollbar-custom"
+                  >
+                    <b>Notes:</b> {record.notes ?? "-"}
                   </Text>
                 </VStack>
 

@@ -70,7 +70,7 @@ export const AnimeRecordForm = ({ refreshRecords }: AnimeRecordFormProps) => {
   const [maxDate, setMaxDate] = useState<string>("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [watchlistErrorMessage, setWatchlistErrorMessage] = useState("");
-  const { addRecord, fetchRecords } = useAnimeRecords();
+  const { addRecord } = useAnimeRecords();
 
   const { user } = useUser();
   const [isVisible, setIsVisible] = useState(true);

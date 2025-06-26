@@ -7,6 +7,7 @@ const url = "https://personal-anime-watchlist-backend.onrender.com";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/',
   server: {
     proxy: {
         '/anime-records': {

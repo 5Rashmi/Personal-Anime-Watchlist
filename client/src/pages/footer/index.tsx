@@ -1,4 +1,5 @@
-import { Box, Text, Link, Stack, useColorModeValue } from "@chakra-ui/react";
+import { Box, Text, Stack, useColorModeValue } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -21,14 +22,12 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} ColdCoffee. All rights reserved.
         </Text>
         <Stack direction="row" spacing={6}>
-          <Link href="/">Home</Link>
-          <Link href="https://github.com/5Rashmi" isExternal>
-            GitHub
-          </Link>
-          <Link href="/about">About</Link>
-          <Link href="/license">License</Link>
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms</Link>
+          <Link to="/">Home</Link>
+          <Link to="https://github.com/5Rashmi">GitHub</Link>
+          <Link to="/about">About</Link>
+          <Link to="/license">License</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/terms">Terms</Link>
         </Stack>
       </Stack>
     </Box>

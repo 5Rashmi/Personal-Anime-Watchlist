@@ -1,7 +1,0 @@
-staticSites:
-  - name: anime-watchlist
-    rootDir: public
-    routes:
-      - type: rewrite
-        source: "/*"
-        destination: "/index.html"

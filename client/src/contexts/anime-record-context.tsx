@@ -45,9 +45,11 @@ export const AnimeRecordsProvider = ({
       `${url}/anime-records/getAllByUserID/${user?.id}`
     );
     if (response.ok) {
-      const records = await response.json();
-      setRecords(records);
+      const newRecord = await response.json();
+      setRecords((prev) => [...prev, newRecord]);
+      return newRecord;
     }
+    return null;
   };
 
   useEffect(() => {

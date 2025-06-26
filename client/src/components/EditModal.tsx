@@ -45,15 +45,21 @@ const EditModal: React.FC<EditModalProps> = ({
               placeholder="Episodes Watched"
               value={editForm.episodesWatched ?? ""}
               min={0}
-              max={editForm.totalEpisodes || Infinity}
-              onChange={(e) =>
-                setEditForm({
-                  ...editForm,
-                  episodesWatched: e.target.value
-                    ? parseInt(e.target.value)
-                    : null,
-                })
-              }
+              max={editForm.totalEpisodes ?? undefined}
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                const max = editForm.totalEpisodes;
+
+                if (!e.target.value) {
+                  setEditForm({ ...editForm, episodesWatched: null });
+                } else if (isNaN(val)) {
+                  return;
+                } else if (typeof max === "number" && val > max) {
+                  setEditForm({ ...editForm, episodesWatched: max });
+                } else {
+                  setEditForm({ ...editForm, episodesWatched: val });
+                }
+              }}
             />
             <text style={{ paddingRight: "12em" }}>
               /{editForm.totalEpisodes}

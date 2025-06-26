@@ -37,6 +37,8 @@ import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
 import { useAnimeRecords } from "../../contexts/anime-record-context";
 import { CloseIcon } from "@chakra-ui/icons";
+import { toast } from "react-toastify";
+import ToastMsg from "../../components/ToastMsg";
 
 export const AnimeRecordForm = () => {
   const labelColor = useColorModeValue("teal.600", "teal.200");
@@ -133,8 +135,13 @@ export const AnimeRecordForm = () => {
     };
 
     if (user) {
-      addRecord(newRecord);
-      fetchRecords();
+      try {
+        addRecord(newRecord);
+        toast.success("Watchlist created successfully.");
+      } catch (error) {
+        console.error("Error creating watchlist", error);
+        toast.error("Failed to create Watchlist");
+      }
     } else {
       setWatchlistErrorMessage(
         "Please Login/Sign Up first to create the watchlist"
@@ -174,6 +181,7 @@ export const AnimeRecordForm = () => {
       boxShadow={cardShadow}
       margin={7}
     >
+      <ToastMsg />
       <form onSubmit={handleSubmit}>
         <CardBody bg={bgColor} padding={8} borderRadius="lg">
           <VStack spacing={4} align="stretch">

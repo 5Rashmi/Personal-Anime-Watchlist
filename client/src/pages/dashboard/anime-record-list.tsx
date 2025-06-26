@@ -1,5 +1,3 @@
-// import { useAnimeRecords } from "../../contexts/anime-record-context"
-
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { AnimeRecord } from "../../../../server/src/interface/animeRecordType";
@@ -13,18 +11,24 @@ import {
   Image,
   SimpleGrid,
   Text,
+  useColorMode,
   useColorModeValue,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import EditModal from "../../components/EditModal";
+import Loading from "../../components/Loading";
+import { toast } from "react-toastify";
+import ToastMsg from "../../components/ToastMsg";
 
 export const AnimeRecordList = () => {
   const [records, setRecords] = useState<AnimeRecord[]>([]);
   const { user } = useUser();
   const labelColor = useColorModeValue("teal.600", "teal.200");
   const userId = user?.id;
+  const { colorMode } = useColorMode();
+  const [isLoading, setIsLoading] = useState(true);
   const url = "https://personal-anime-watchlist-backend.onrender.com";
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRecord, setSelectedRecord] = useState<AnimeRecord | null>(
@@ -46,12 +50,15 @@ export const AnimeRecordList = () => {
 
   const fetchRecords = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.get(
         `${url}/anime-records/getAllByUserID/${userId}`
       );
       setRecords(res.data);
     } catch (err) {
       console.error("Error fetching records:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -83,8 +90,10 @@ export const AnimeRecordList = () => {
         prev.map((r) => (r._id === selectedRecord._id ? res.data : r))
       );
       onClose();
+      toast.success("Watchlist updated successfully");
     } catch (err) {
       console.error("Update failed:", err);
+      toast.error("Failed to update watchlist, please try again");
     }
   };
 
@@ -92,13 +101,26 @@ export const AnimeRecordList = () => {
     try {
       await axios.delete(`${url}/anime-records/${id}`);
       setRecords((prev) => prev.filter((r) => r._id !== id));
+      toast.success("Watchlist deleted successfully.");
     } catch (err) {
       console.error("Error deleting record:", err);
+      toast.error("Failed to delete Watchlist.");
     }
   };
 
+  if (!userId) {
+    return (
+      <Center>
+        <Text color={useColorModeValue("gray.700", "gray.400")}>
+          Please sign in to view your watchlist.
+        </Text>
+      </Center>
+    );
+  }
+
   return (
-    <Box p={6} minH="100vh" bg="gray.900">
+    <Box p={6} minH="100vh" bg={colorMode}>
+      <ToastMsg />
       <Heading
         mb={6}
         textAlign="center"
@@ -110,9 +132,15 @@ export const AnimeRecordList = () => {
         🌸 Your Watchlist
       </Heading>
 
-      {records.length === 0 ? (
+      {records.length === 0 && !isLoading ? (
         <Center>
-          <Text color="gray.400">No records found.</Text>
+          <Text color={useColorModeValue("gray.700", "gray.400")}>
+            No records found.
+          </Text>
+        </Center>
+      ) : isLoading ? (
+        <Center>
+          <Loading />
         </Center>
       ) : (
         <SimpleGrid columns={[1, 2, 3, 4]} spacing={6}>
@@ -123,7 +151,7 @@ export const AnimeRecordList = () => {
               maxW="xs"
               borderRadius="xl"
               overflow="hidden"
-              bg="gray.800"
+              bg={colorMode}
               boxShadow="dark-lg"
               zIndex={0}
               transition="all 0.3s"
@@ -152,7 +180,7 @@ export const AnimeRecordList = () => {
                 {record.description && (
                   <Box
                     fontSize="sm"
-                    color="gray.300"
+                    color={useColorModeValue("gray.700", "gray.300")}
                     borderRadius="md"
                     p={2}
                     maxH="100px"
@@ -168,7 +196,7 @@ export const AnimeRecordList = () => {
                   align="start"
                   spacing={1}
                   fontSize="sm"
-                  color="gray.300"
+                  color={useColorModeValue("gray.700", "gray.300")}
                   mt={1}
                 >
                   <Text>
@@ -212,7 +240,7 @@ export const AnimeRecordList = () => {
                       colorScheme="purple"
                       variant="outline"
                       borderColor="gray.500"
-                      color="gray.200"
+                      color={useColorModeValue("gray.600", "gray.200")}
                     >
                       {g}
                     </Badge>

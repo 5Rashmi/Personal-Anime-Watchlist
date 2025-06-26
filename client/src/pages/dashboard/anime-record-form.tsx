@@ -38,9 +38,13 @@ import { useUser } from "@clerk/clerk-react";
 import { useAnimeRecords } from "../../contexts/anime-record-context";
 import { CloseIcon } from "@chakra-ui/icons";
 import { toast } from "react-toastify";
-import ToastMsg from "../../components/ToastMsg";
+import { NewAnimeRecord } from "../../types/editModalType";
 
-export const AnimeRecordForm = () => {
+type AnimeRecordFormProps = {
+  refreshRecords: () => void;
+};
+
+export const AnimeRecordForm = ({ refreshRecords }: AnimeRecordFormProps) => {
   const labelColor = useColorModeValue("teal.600", "teal.200");
   const bgColor = useColorModeValue("white", "gray.800");
   const cardShadow = useColorModeValue("lg", "dark-lg");
@@ -116,10 +120,10 @@ export const AnimeRecordForm = () => {
     setSearchResults([]);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newRecord = {
+    const newRecord: NewAnimeRecord = {
       userId: user?.id ?? "",
       name: name,
       posterUrl: poster,
@@ -136,15 +140,16 @@ export const AnimeRecordForm = () => {
 
     if (user) {
       try {
-        addRecord(newRecord);
+        await addRecord(newRecord);
         toast.success("Watchlist created successfully.");
+        await refreshRecords();
       } catch (error) {
         console.error("Error creating watchlist", error);
         toast.error("Failed to create Watchlist");
       }
     } else {
       setWatchlistErrorMessage(
-        "Please Login/Sign Up first to create the watchlist"
+        "Please Sign In/Sign Up first to create the watchlist"
       );
       onOpen();
     }
@@ -181,7 +186,6 @@ export const AnimeRecordForm = () => {
       boxShadow={cardShadow}
       margin={7}
     >
-      <ToastMsg />
       <form onSubmit={handleSubmit}>
         <CardBody bg={bgColor} padding={8} borderRadius="lg">
           <VStack spacing={4} align="stretch">
@@ -399,7 +403,7 @@ export const AnimeRecordForm = () => {
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>Header</ModalHeader>
+              <ModalHeader></ModalHeader>
               <ModalCloseButton />
               <ModalBody>
                 <Text>{watchlistErrorMessage}</Text>

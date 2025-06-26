@@ -1,3 +1,5 @@
+import { AnimeRecord } from "../../../server/src/interface/animeRecordType";
+
 export interface EditFormState {
   notes: string;
   episodesWatched: number | null;
@@ -13,3 +15,6 @@ export interface EditModalProps {
   setEditForm: React.Dispatch<React.SetStateAction<EditFormState>>;
   handleUpdate: () => void;
 }
+
+export type NewAnimeRecord = Omit<AnimeRecord, "_id">;
+

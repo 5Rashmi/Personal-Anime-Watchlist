@@ -6,12 +6,14 @@ import { Button, Flex, useColorMode, Image } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { AnimeRecordsProvider } from "./contexts/anime-record-context";
 import "./App.css";
+import ToastMsg from "./components/ToastMsg";
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <>
+      <ToastMsg />
       <header>
         <Flex justify={"space-between"} alignItems={"center"} px={4}>
           <Image src={logo} alt="Logo" boxSize="120px" />

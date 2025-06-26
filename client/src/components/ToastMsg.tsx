@@ -8,6 +8,8 @@ const ToastMsg = () => {
     <ToastContainer
       theme={colorMode === "light" ? "light" : "dark"}
       aria-label={undefined}
+      autoClose={5000}
+      closeOnClick={true}
     />
   );
 };

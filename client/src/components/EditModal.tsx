@@ -13,6 +13,7 @@ import {
   ModalOverlay,
   Select,
   Textarea,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
 import { EditModalProps } from "../types/editModalType";
@@ -72,11 +73,51 @@ const EditModal: React.FC<EditModalProps> = ({
               setEditForm({ ...editForm, watchStatus: e.target.value })
             }
           >
-            <option value="Watching">Watching</option>
-            <option value="On Hold">On Hold</option>
-            <option value="Plan to Watch">Plan to Watch</option>
-            <option value="Dropped">Dropped</option>
-            <option value="Completed">Completed</option>
+            <option
+              style={{
+                backgroundColor: useColorModeValue("white", "#2D3748"),
+                color: useColorModeValue("black", "white"),
+              }}
+              value="Watching"
+            >
+              Watching
+            </option>
+            <option
+              style={{
+                backgroundColor: useColorModeValue("white", "#2D3748"),
+                color: useColorModeValue("black", "white"),
+              }}
+              value="On Hold"
+            >
+              On Hold
+            </option>
+            <option
+              style={{
+                backgroundColor: useColorModeValue("white", "#2D3748"),
+                color: useColorModeValue("black", "white"),
+              }}
+              value="Plan to Watch"
+            >
+              Plan to Watch
+            </option>
+            <option
+              style={{
+                backgroundColor: useColorModeValue("white", "#2D3748"),
+                color: useColorModeValue("black", "white"),
+              }}
+              value="Dropped"
+            >
+              Dropped
+            </option>
+            <option
+              style={{
+                backgroundColor: useColorModeValue("white", "#2D3748"),
+                color: useColorModeValue("black", "white"),
+              }}
+              value="Completed"
+            >
+              Completed
+            </option>
           </Select>
           <Box>
             <FormLabel fontWeight="bold">Rating</FormLabel>

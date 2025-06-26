@@ -1,5 +1,6 @@
 import { useUser } from "@clerk/clerk-react";
 import { createContext, useContext, useEffect, useState } from "react";
+import { NewAnimeRecord } from "../types/editModalType";
 
 interface AnimeRecord {
   id?: string;
@@ -19,7 +20,7 @@ interface AnimeRecord {
 
 interface AnimeRecordsContextType {
   records: AnimeRecord[];
-  addRecord: (record: AnimeRecord) => void;
+  addRecord: (record: NewAnimeRecord) => Promise<void>;
   fetchRecords: () => Promise<void>;
   // updateRecord: (id: string, newRecord: AnimeRecord) => void;
   // deleteRecord: (id: string) => void;
@@ -56,7 +57,7 @@ export const AnimeRecordsProvider = ({
     fetchRecords();
   }, [user]);
 
-  const addRecord = async (record: AnimeRecord) => {
+  const addRecord = async (record: NewAnimeRecord) => {
     const response = await fetch(`${url}/anime-records`, {
       method: "POST",
       body: JSON.stringify(record),

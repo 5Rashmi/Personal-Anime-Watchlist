@@ -1,13 +1,15 @@
 ﻿# Personalized Anime Watchlist
 
-![Logo](https://github.com/5ColdCoffee/Personal-Anime-Watchlist/raw/main/client/img/logo.png)
+![Logo](https://github.com/5Rashmi/Personal-Anime-Watchlist/raw/main/client/img/logo.png)
 
 A sleek and responsive anime watchlist app built with **React**, **TypeScript**, and **Chakra UI**, designed for anime lovers who want to track their anime-watching journey with style.
 
 ---
 
 ![App Screenshot](./assets/screenshot.png)
+
 ![App Screenshot2](./assets/screenshot2.png)
+
 ![App Screenshot3](./assets/screenshot3.png)
 
 ---
@@ -15,18 +17,20 @@ A sleek and responsive anime watchlist app built with **React**, **TypeScript**,
 ## ✨ Features
 
 - 📺 Add, edit, and delete anime entries with notes, genre tags, ratings, and watch status  
-- 🎨 Fully responsive, anime-inspired UI with dark/light mode toggle  
-- 🔐 User authentication with Clerk  
-- ☁️ Persistent data storage with a RESTful backend  
-- 🔁 Live CRUD operations and real-time refresh  
-- 🌍 Deployed on Render
+- 🎨 Fully responsive, anime-inspired UI with dark/light mode toggle using Chakra UI  
+- 🔐 Seamless user authentication powered by Clerk  
+- ☁️ Persistent data storage via a RESTful backend (Express + MongoDB)  
+- 🔁 Live CRUD operations with real-time UI refresh  
+- 🌐 Integrated with the [Jikan API](https://jikan.moe/) for fetching anime metadata  
+- 🚀 Deployed on [Render](https://render.com) for both frontend and backend hosting
 
 ---
 
 ## 🔧 Tech Stack
 
-- **Frontend**: React, TypeScript, Chakra UI, React Router DOM, Clerk  
+- **Frontend**: React, TypeScript, Chakra UI, React Router DOM, Clerk 
 - **Backend**: Express.js, MongoDB
+- **API**: Jikan API
 - **Hosting**: Render (frontend + backend)  
 - **Others**: Axios, Toastify, Chakra Icons
 

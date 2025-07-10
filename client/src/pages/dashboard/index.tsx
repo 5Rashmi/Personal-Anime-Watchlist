@@ -38,7 +38,7 @@ export const Dashboard = () => {
     <div className="dashboard-container">
       <Flex align="center" ml={5} mt={2}>
         <Text fontSize="lg" fontWeight="semibold" color={labelColor}>
-          👋 Welcome, {user?.firstName}!
+          👋 Welcome, {user?.firstName || "User"}!
         </Text>
       </Flex>
 
